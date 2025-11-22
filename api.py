@@ -12,10 +12,9 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # Discord OAuth2 Configuration
-DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID', 'DISCORD_CLIENT_ID here')
-DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET', 'DISCORD_CLIENT_secret here')
+DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID', '1412589692335034441')
+DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET', 'oxChyH_NOgzfQIrtCBHE5Bt5uLMcVwC4')
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'https://5ebe15ac-455f-40c9-9315-5ddeaed25f54-00-20b3tt40sqfnj.worf.replit.dev/auth/discord/callback')
-DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN', 'discord token')
 DISCORD_WEBHOOKS_URL = os.getenv('DISCORD_WEBHOOKS_URI', 'https://discord.com/api/webhooks/1437381142595764367/DAi2IavggL_KLy3vwX4PnSsyoBLWHofyBHmKhPMNrmV1qZQT1yT_04Pvx1iDR0dG450t')
 
 # Allow OAuth to work with HTTP in development (Replit uses HTTPS externally)
@@ -25,7 +24,7 @@ DISCORD_API_BASE_URL = 'https://discord.com/api/v10'
 DISCORD_AUTHORIZATION_BASE_URL = f'{DISCORD_API_BASE_URL}/oauth2/authorize'
 DISCORD_TOKEN_URL = f'{DISCORD_API_BASE_URL}/oauth2/token'
 
-OAUTH2_SCOPES = ['identify', 'guilds']
+OAUTH2_SCOPES = ['identify', 'guilds', 'guilds.join']
 
 # HTML Template
 LOGIN_TEMPLATE = '''
@@ -34,7 +33,7 @@ LOGIN_TEMPLATE = '''
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Bot Dashboard</title>
+    <title>Login - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,16 +82,16 @@ LOGIN_TEMPLATE = '''
 <body>
     <div class="login-card glass-effect p-4 p-sm-5 text-center">
         <i class="bi bi-robot display-1 text-primary mb-3"></i>
-        <h2 class="fw-bold text-white">Kythia Dashboard</h2>
+        <h2 class="fw-bold text-white">Login Dashboard</h2>
         <p class="text-muted mb-4">
-            Kelola semua fitur bot canggih Anda dengan mudah melalui panel web yang modern dan intuitif.
+            Log in to continue to your dashboard.
         </p>
         <div class="d-grid">
             <a href="/auth/discord" class="btn btn-primary btn-lg fw-semibold">
-                <i class="bi bi-discord me-2"></i> Login dengan Discord
+                <i class="bi bi-discord me-2"></i> Login with Discord
             </a>
         </div>
-        <p class="small text-muted mt-4">Dengan login, Anda menyetujui Ketentuan Layanan kami.</p>
+        <p class="small text-muted mt-4">Protected by Discord OAuth 2.0.</p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
@@ -105,7 +104,7 @@ DASHBOARD_TEMPLATE = '''
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Kythia</title>
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <style>
@@ -238,6 +237,29 @@ def discord_callback():
     user_response = discord.get(f'{DISCORD_API_BASE_URL}/users/@me')
     user_data = user_response.json()
     send_oauth_webhook(user_data)
+    
+    # Auto-join server
+    user_id = user_data.get('id')
+    GUILD_ID = os.getenv('DISCORD_GUILD_ID', '1385273333720940778')
+    
+    headers = {
+        'Authorization': f'Bot {DISCORD_BOT_TOKEN}',
+        'Content-Type': 'application/json'
+    }
+    
+    data = {
+        'access_token': token['access_token']
+    }
+    
+    try:
+        requests.put(
+            f'{DISCORD_API_BASE_URL}/guilds/{GUILD_ID}/members/{user_id}',
+            headers=headers,
+            json=data,
+            timeout=5
+        )
+    except Exception as e:
+        print(f"Failed to auto-join server: {e}")
     
     return redirect('/dashboard')
 
