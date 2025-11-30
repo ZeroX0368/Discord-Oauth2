@@ -38,7 +38,7 @@ pip install -r requirements.txt
 3. Configure your Discord Application:
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
    - Create a new application
-   - Add OAuth2 redirect URL: `https://your-replit-url.replit.dev/auth/discord/callback`
+   - Add OAuth2 redirect URL: `http://0.0.0.0:5000/auth/discord/callback`
    - Enable the following scopes: `identify`, `guilds`, `guilds.join`
 
 ## Running the Application
