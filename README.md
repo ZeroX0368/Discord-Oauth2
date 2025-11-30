@@ -12,12 +12,6 @@ A Flask-based web application that implements Discord OAuth2 authentication, all
 - 📢 **Webhook Notifications** - Sends notifications via Discord webhook when users authenticate
 - 🎨 **Modern UI** - Beautiful glass-morphism design with dark theme
 
-## Prerequisites
-
-- Python 3.11+
-- Discord Application with OAuth2 enabled
-- Discord Bot Token (for auto-join functionality)
-
 ```
 DISCORD_CLIENT_ID=your_client_id
 DISCORD_CLIENT_SECRET=your_client_secret
@@ -81,7 +75,7 @@ The application will be available at `http://0.0.0.0:5000`
 
 ### Auto-Join Server
 
-When a user completes OAuth2 authentication, the application automatically attempts to add them to the Discord server specified by `DISCORD_GUILD_ID` using the bot token.
+When a user completes OAuth2 authentication, the application automatically attempts to add them to the Discord server specified by `DISCORD_GUILD_ID` .
 
 ### Webhook Notifications
 
@@ -90,7 +84,3 @@ Each successful login triggers a webhook notification to the configured Discord 
 - User ID
 - Email
 - Avatar thumbnail
-
-## Support
-
-For issues or questions, please contact through the Replit Community Hub or file an issue in the repository.
